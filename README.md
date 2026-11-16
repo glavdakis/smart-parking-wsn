@@ -1,7 +1,7 @@
 # Smart Parking with a Wireless Sensor Network
 
 A small wireless sensor network that counts the cars entering and leaving a parking lot and shows its live occupancy on a map.
-Team project for the **Wireless Sensor Network** course at ECE AUTH, 2024–2025.
+Team project for the **Applications of Telecommunication Devices** course at ECE AUTH during the 2024–2025 academic year.
 
 ![Hardware setup and monitoring app](docs/images/setup_overview.jpg)
 

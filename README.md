@@ -1,19 +1,57 @@
 # Smart Parking with a Wireless Sensor Network
 
-This repository contains the project for the **Applications of Telecommunication Devices** course at ECE AUTH during the 2024–2025 academic year.
+A small wireless sensor network that counts the cars entering and leaving a parking lot and shows its live occupancy on a map.
+Team project for the **Wireless Sensor Network** course at ECE AUTH, 2024–2025.
 
-| Folder | Contents |
-|---|---|
-| `firmware` | Arduino sketches for the sensor node (`transmitter`) and the base station (`receiver`) |
-| `gui` | Python/Tkinter app that monitors the parking areas |
-| `libraries` | Arduino libraries used: RF22 and Ultrasonic |
-| `docs` | Report, presentation and photos of the setup |
+![Hardware setup and monitoring app](docs/images/setup_overview.jpg)
 
-## Sensor Network
-Each parking lot has a sensor node: an Arduino with an RFM22 radio and two ultrasonic sensors, one at the entrance and one at the exit. Every 0.5 s the node measures the distances, and when an object comes closer than 10 cm it sends an `ENTER` or `EXIT` message. A second Arduino acts as the base station: it receives the messages, acknowledges them and forwards them to the computer over the serial port. The link uses the RF22Router library at 433 MHz with OOK modulation at 40 kbps and 20 dBm.
+## How it works
 
-## Monitoring App
-The app shows five parking areas of 50 spots each on a map of Los Angeles. When the user selects an area, the messages from the serial port update its occupied and available spots. The app also shows the area's pricing, an occupancy bar that turns from blue to orange to red, a warning when the lot is full, and an activity log. Manual controls simulate cars entering and leaving without the hardware.
+```mermaid
+flowchart LR
+    A["Sensor node<br/>Arduino + RFM22<br/>2 × HC-SR04"] -- "433 MHz radio<br/>ENTER / EXIT" --> B["Base station<br/>Arduino + RFM22"]
+    B -- "USB serial" --> C["Monitoring app<br/>Python / Tkinter"]
+```
 
-## Capacity Analysis
-Each event is a message of at most 100 bits, sent about once per second, so a transmission at 100 kbps lasts about 1 ms. Treating the nodes as a pure ALOHA network, the channel throughput of $S_{max} = 0.186$ supports about 186 parking lots sharing one channel.
+- **Sensor node:** two ultrasonic sensors watch the entrance and the exit every 0.5 s. When an object comes closer than 10 cm, and the previous reading was farther away, the node sends `ENTER` or `EXIT`. Checking the previous reading means a car that stops at the gate is counted only once.
+- **Base station:** receives each message, sends an acknowledgement and prints the event on the serial port.
+- **Monitoring app:** shows five parking areas of 50 spots each on a map. For the selected area it updates the occupied and free spots, shows the pricing and an occupancy bar, warns when the lot is full and keeps an activity log. Manual buttons let you correct the count or test without the hardware.
+
+The radios use the RF22Router library at 433 MHz with OOK modulation (40 kbps) and 20 dBm output power.
+
+![Monitoring app](docs/images/gui_occupancy.png)
+
+## Network capacity
+
+Assuming 100-bit packets sent about once per second at 100 kbps, each node keeps the channel busy for 1 ms per second ($S = 0.001$). With pure ALOHA ($S_{max} = 0.186$), one base station could serve up to **186 sensor nodes**.
+
+## Repository structure
+
+```
+firmware/
+  transmitter/   sensor node sketch
+  receiver/      base station sketch
+gui/             monitoring app and map image
+libraries/       Arduino libraries (RF22, Ultrasonic)
+docs/            report (Greek), presentation and photos
+```
+
+## Running it
+
+1. Install the two libraries from `libraries/` in the Arduino IDE (*Sketch → Include Library → Add .ZIP Library*).
+2. Upload `firmware/transmitter` to the board with the sensors (trigger/echo on A0/A1 for the entrance, A2/A3 for the exit) and `firmware/receiver` to the second board.
+3. Connect the receiver by USB, set `COM_PORT` at the top of `gui/parking_gui.py`, then run:
+
+   ```bash
+   pip install -r gui/requirements.txt
+   python gui/parking_gui.py
+   ```
+
+4. Click a parking area on the map, then press **Connect**.
+
+## Demo
+
+- [Demo video](https://www.youtube.com/watch?v=2M6oESmxwL0)
+- [Promo video](https://www.youtube.com/watch?v=g7QFT5BLIXE)
+
+The full write-up is in the [report](docs/report.pdf) and the [presentation](docs/presentation.pptx).

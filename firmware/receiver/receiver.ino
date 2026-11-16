@@ -7,7 +7,6 @@
 
 // Singleton instance of the radio
 RF22Router rf22(MY_ADDRESS); // initiate the class to talk to my radio with MY_ADDRESS
-int received_value=0;
 
 void setup() {
   Serial.begin(9600);
@@ -38,12 +37,11 @@ void loop() {
   if (rf22.recvfromAck(buf, &len, &from)) { // I'm always expecting to receive something from any legitimate transmitter (DESTINATION_ADDRESS_1, DESTINATION_ADDRESS_2). If I do, I'm sending an acknowledgement 
     buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
     memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN); // I'm copying what I have received in variable incoming
-    received_value=atoi((char*)incoming); // transforming my data into an integer
-    if(received_value==441) {
-     Serial.println("ENTER");  
+    if(strcmp(incoming, "ENTER") == 0) {
+     Serial.println("ENTER");
     }
-    if(received_value==523) {
-     Serial.println("EXIT");  
+    if(strcmp(incoming, "EXIT") == 0) {
+     Serial.println("EXIT");
     }
   }
   

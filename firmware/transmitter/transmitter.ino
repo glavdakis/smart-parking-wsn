@@ -68,16 +68,15 @@ void loop() {
   if (!prev_object_in && curr_object_in) {
     Serial.println("ENTRANCE PASSAGE DETECTED!");
     
-    // the following variables are used in order to transform my integer measured value into a uint8_t variable, which is proper for my radio
+    // the following variables are used in order to transform my text message into a uint8_t variable, which is proper for my radio
     char data_read_in[RF22_ROUTER_MAX_MESSAGE_LEN];
     uint8_t data_send_in[RF22_ROUTER_MAX_MESSAGE_LEN];
     memset(data_read_in, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-    memset(data_send_in, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);    
-    sprintf(data_read_in, "%d", "ENTER"); 
-    data_read_in[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0'; 
+    memset(data_send_in, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+    strcpy(data_read_in, "ENTER");
     memcpy(data_send_in, data_read_in, RF22_ROUTER_MAX_MESSAGE_LEN); // now I'm copying data_read to data_send
 
-    if (rf22.sendtoWait(data_read_in, sizeof(data_read_in), DESTINATION_ADDRESS_1) != RF22_ROUTER_ERROR_NONE) { // I'm sending the data in variable data_send to DESTINATION_ADDRESS_1... cross fingers
+    if (rf22.sendtoWait(data_send_in, sizeof(data_send_in), DESTINATION_ADDRESS_1) != RF22_ROUTER_ERROR_NONE) { // I'm sending the data in variable data_send to DESTINATION_ADDRESS_1... cross fingers
       Serial.println("sendtoWait failed"); // for some reason I have failed
     }
     else {
@@ -90,16 +89,15 @@ void loop() {
   if (!prev_object_out && curr_object_out) {
     Serial.println("EXIT PASSAGE DETECTED!");
     
-    // the following variables are used in order to transform my integer measured value into a uint8_t variable, which is proper for my radio
+    // the following variables are used in order to transform my text message into a uint8_t variable, which is proper for my radio
     char data_read_out[RF22_ROUTER_MAX_MESSAGE_LEN];
     uint8_t data_send_out[RF22_ROUTER_MAX_MESSAGE_LEN];
     memset(data_read_out, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-    memset(data_send_out, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);    
-    sprintf(data_read_out, "%d", "EXIT");
-    data_read_out[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0'; 
+    memset(data_send_out, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+    strcpy(data_read_out, "EXIT");
     memcpy(data_send_out, data_read_out, RF22_ROUTER_MAX_MESSAGE_LEN); // now I'm copying data_read to data_send
 
-    if (rf22.sendtoWait(data_read_out, sizeof(data_read_out), DESTINATION_ADDRESS_1) != RF22_ROUTER_ERROR_NONE) { // I'm sending the data in variable data_send to DESTINATION_ADDRESS_1... cross fingers
+    if (rf22.sendtoWait(data_send_out, sizeof(data_send_out), DESTINATION_ADDRESS_1) != RF22_ROUTER_ERROR_NONE) { // I'm sending the data in variable data_send to DESTINATION_ADDRESS_1... cross fingers
       Serial.println("sendtoWait failed"); // for some reason I have failed
     }
     else {

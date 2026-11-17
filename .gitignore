@@ -1,1 +1,8 @@
 docs/images/references/
+
+*.tex
+*.aux
+*.log
+*.toc
+*.bcf
+*.run.xml

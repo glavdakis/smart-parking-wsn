@@ -33,7 +33,7 @@ firmware/
   receiver/      base station sketch
 gui/             monitoring app and map image
 libraries/       Arduino libraries (RF22, Ultrasonic)
-docs/            report (Greek), presentation and photos
+docs/            report, presentation and photos
 ```
 
 ## Running it
